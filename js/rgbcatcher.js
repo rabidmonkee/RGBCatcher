@@ -66,7 +66,74 @@ Basket.prototype.draw = function()
 	// All these arguments can be found in the atributes of our basket object 
 	context.fillRect(this.x, this.y, this.width, this.height); 
 }
-  
+
+RGBCatcher = new function() 
+{ 
+	// Public 
+	this.colors = [ 
+		'#f00', 
+		'#0f0', 
+		'#00f', 
+	]; 
+
+	// Private 
+	var basketData = [ 
+		['width', 30], 
+		['height', 10], 
+		['xSpeed', 1.1], 
+		['color', '#f00'], 
+		['oldColor', '#f00'] 
+	]; 
+
+	var basket; 
+
+	this.run = function() { 
+		// Set the global 'canvas' object to the #canvas DOM object to be able to access its width, height and other attributes are 
+		canvas = document.getElementById('canvas'); 
+
+		// This is where its all about; getting a new instance of the C2A object — pretty simple huh? 
+		context = canvas.getContext('2d'); 
+
+		// Add an eventListener for the global keydown event 
+		document.addEventListener('keydown', function(event) { 
+			// Add the keyCode of this event to the global keyOn Array 
+			// We can then easily check if a specific key is pressed by simply checking whether its keycode is set to true 
+			keyOn[event.keyCode] = true; 
+		}, false); 
+
+		// Add another eventListener for the global keyup event 
+		document.addEventListener('keyup', function(event) 	{ 
+			// Set the keyCode of this event to false, to avoid an inifinite keydown appearance 
+			keyOn[event.keyCode] = false; 
+		}, false); 
+
+		// Instantiate the basket object and feed it the required basketData 
+		basket = new Basket(basketData); 
+
+		// At the start of a new game, this method is called to set dynamic variables to their default values 
+		resetGame(); 
+	} 
+
+	function resetGame() { 
+		basket.resetPosition(); 
+		basket.resetColor(); 
+	} 
+	function gameLoop() { 
+		context.clearRect(0, 0, canvas.width, canvas.height); 
+
+		basket.update(); 
+	} 
+	
+	// The variable associated with the setInterval ID 
+	var interval; 
+
+	this.run = function() { 
+		// Set the interval variable to the interval its ID so we can easily abort the game loop later 
+		// The speed of the interval equals 30 frames per second, which should be enough to keep things running smoothly 
+		interval = setInterval(gameLoop, 30/1000); 
+	} 
+}
+
 var Block = function() { 
 
 } 
@@ -115,4 +182,10 @@ RGBCatcher = new function() {
         '#0f0', // Green 
         '#00f', // Blue 
     ]; 
+}
+
+
+window.onload = function() 
+{ 
+	RGBCatcher.run(); 
 }
